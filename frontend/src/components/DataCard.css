@@ -1,0 +1,52 @@
+.data-card {
+  background-color: #16213e;
+  border-radius: 12px;
+  padding: 25px;
+  width: 280px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✅ Top color line (animated glow look) */
+.data-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background: var(--card-color, #ffcc00); /* default yellow */
+}
+
+/* Hover animation */
+.data-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Header with icon and title */
+.data-card h3 {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Data text */
+.data-card p {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #b0b0b0;
+}
+
+.data-card p span {
+  color: #f7d794;
+  font-weight: 500;
+}

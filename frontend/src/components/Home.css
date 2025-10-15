@@ -1,0 +1,101 @@
+.home {
+  background-color: #0d1321;
+  min-height: 100vh;
+  color: #eaeaea;
+  text-align: center;
+  padding:5px 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.home h2 {
+  color: #ff6666;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.home p {
+  color: #b0b0b0;
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.data-section {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+/* Card container (wrap your DataCard components inside this) */
+.traffic, .airquality {
+  display: inline-block;
+  margin: 15px;
+}
+
+/* Each card styling (if using DataCard component) */
+.data-card {
+  background-color: #16213e;
+  border-radius: 12px;
+  padding: 25px;
+  width: 280px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.data-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Card header */
+.data-card h3 {
+  font-size: 1.5rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Latest values inside card */
+.data-card p {
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+.data-card p span {
+  color: #f7d794;
+  font-weight: 500;
+}
+
+/* Buttons at the bottom */
+.home button {
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  margin: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.home button:hover {
+  background-color: #ff5555;
+  transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+  margin-top: 50px;
+  color: #888;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
