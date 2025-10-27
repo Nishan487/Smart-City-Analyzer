@@ -1,0 +1,18 @@
+.navbar{
+    display:block;
+    border: solid 1px goldenrod;
+    background-color:#153379;
+
+}
+
+.NavLink{
+    padding:0.5px;
+    margin-left:9px;
+    border: solid 0.4px rgb(22, 7, 50);
+    background-color:#1b0329;
+    color:goldenrod;
+    border-radius: 10%;
+}
+nav{
+    margin-left: 650px;
+}

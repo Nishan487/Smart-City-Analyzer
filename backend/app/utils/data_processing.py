@@ -1,4 +1,7 @@
 import pandas as pd
+import random
+import time
+
 from datetime import datetime , timedelta
 
 # def get_latest_data(file_path, value_column):
@@ -8,6 +11,25 @@ from datetime import datetime , timedelta
 #     return {"value": float(latest_value), "time": latest_time}
 
 
+
+def get_live_value(file_path, column_name):
+    try:
+        df = pd.read_csv(file_path)
+        # Randomly pick a row to simulate live changes
+        random_row = df.sample(1)
+        value = random_row[column_name].values[0]
+        timestamp = time.strftime("%H:%M:%S")
+        try:
+            value = float(value)
+        except (ValueError, TypeError):
+            value = str(value)
+
+        return {"value": value, "time": timestamp}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def clean_traffic(filepath):
     try:
         df = pd.read_csv(filepath)
@@ -15,6 +37,10 @@ def clean_traffic(filepath):
         df.dropna(inplace=True)
         # Check if Time' column exists
         if 'Time' in df.columns:
+            n=len(df)
+            end_time=datetime.now()
+            start_time = end_time-timedelta(hours=24)
+            df['Time']=[start_time +timedelta(seconds=i * (24*3600/n)) for i in range(n)]
             df['Time'] = pd.to_datetime(df['Time'],errors='coerce')
         else:
             print(" Warning: 'Time' column not found in the dataset")
@@ -52,3 +78,7 @@ def clean_airquality(filepath):
         print(f"Error while cleaning the data: {e}")
         return []
     
+    
+#     git remote add origin https://github.com/Nishan487/Smart-City-Analyzer.git
+# git branch -M main
+# git push -u origin main
