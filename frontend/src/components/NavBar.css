@@ -1,8 +1,11 @@
 .navbar{
-    display:block;
+    display:flex;
     border: solid 1px goldenrod;
     background-color:#153379;
-
+    
+    align-items: center;
+    justify-content: center;
+    height: 50px;
 }
 
 .NavLink{
@@ -12,7 +15,21 @@
     background-color:#1b0329;
     color:goldenrod;
     border-radius: 10%;
+    align-items: center;
+    align-content: center;
 }
 nav{
-    margin-left: 650px;
+    display: flex;
+    margin-left: 427px;
+    
+}
+.logo{
+    color: goldenrod;
+    font-size: 19.3px;
+    margin-left: 10px;
+   
+}
+.logos{
+    margin-left: 2px;
+    color: gold;
 }

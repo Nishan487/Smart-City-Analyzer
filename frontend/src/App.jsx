@@ -11,8 +11,8 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/traffic" element={<Traffic />} />
-        <Route path="/airquality" element={<AirQuality />} />
+        <Route path="/traffic/" element={<Traffic />} />
+        <Route path="/airquality/" element={<AirQuality />} />
       </Routes>
     </div>
   );

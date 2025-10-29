@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DataCard from './DataCard'
 import { FaTrafficLight } from "react-icons/fa";
 import { TbWind } from "react-icons/tb";
@@ -28,6 +28,11 @@ const Home = () => {
 //   const interval = setInterval(fetchData, 5000);
 //   return () => clearInterval(interval);
 // }, []);
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
   return (
     <div className='home'>
       <h2>Smart City Analytics DrashBoard</h2>

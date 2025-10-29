@@ -9,6 +9,7 @@ def create_app():
     # Import and register blueprints
     from app.routes.airquality import airquality_bp
     from app.routes.traffic import traffic_bp
+    
     # from app.routes.energy import energy_bp
     # from app.routes.energy import energy_bp
     app.secret_key = "my-secret-key"
