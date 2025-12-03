@@ -1,165 +1,245 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  TimeScale,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+import "chartjs-adapter-date-fns";
+import "./AirQuality.css";
+
+// Register Chart.js components
+ChartJS.register(
+  LineElement,
+  PointElement,
+  CategoryScale,
+  TimeScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+const parseTime = (timeString) => new Date(timeString);
 
 export default function AirQuality() {
   const [data, setData] = useState([]);
-  const [loading,setLoading]=useState(true);
-  const [activeTab,setActiveTab]=useState("table");
-
-
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("table");
 
   const fetchAirQualityData = () => {
-    fetch("http://127.0.0.1:5000/airquality/") // Flask API endpoint
-      .then(res => res.json())
-      .then(json =>{
-        console.log("received data",json)
-        if(Array.isArray(json)) setData(json);
-        else if(json.data) setData(json.data);
-        else setData([]);
-  })
-      .catch(err => console.error("error fetching airquality data",err))
-      .finally(()=> setLoading(false));
-  }
+    fetch("http://127.0.0.1:5000/airquality/")
+      .then((res) => res.json())
+      .then((json) => {
+        const fetchedData = Array.isArray(json) ? json : json.data || [];
+        setData(fetchedData);
+      })
+      .catch((err) => console.error("❌ Error fetching airquality data:", err))
+      .finally(() => setLoading(false));
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchAirQualityData();
-    const interval = setInterval(fetchAirQualityData,60000); // refresh every 60s
-    return ()=> clearInterval(interval);
-  },[]);
+    const interval = setInterval(fetchAirQualityData, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const displayedColumns = ["Time", "PM2.5", "PM10", "NO2","Temperature","Wind Speed"];
+  const filteredData = useMemo(() => {
+    if (data.length === 0) return [];
+    const now = new Date();
+    const eightHoursAgo = new Date(now.getTime() - 8 * 60 * 60 * 1000);
+    return data.filter((row) => parseTime(row.Time) >= eightHoursAgo);
+  }, [data]);
 
+  const actualData = useMemo(() => {
+    const now = new Date();
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+    return filteredData.filter((row) => parseTime(row.Time) < threeHoursAgo);
+  }, [filteredData]);
+
+  const predictedData = useMemo(() => {
+    const now = new Date();
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+    return filteredData.filter((row) => parseTime(row.Time) >= threeHoursAgo);
+  }, [filteredData]);
+
+  const displayedColumns = [
+    "Time",
+    "PM2.5",
+    "PM10",
+    "NO2",
+    "Temperature",
+    "Wind Speed",
+  ];
+
+  const chartData = {
+    labels: filteredData.map((row) => parseTime(row.Time)),
+    datasets: [
+      {
+        label: "PM10 Actual",
+        data: actualData.map((row) => row.PM10),
+        borderColor: "green",
+        backgroundColor: "rgba(0, 128, 0, 0.1)",
+        pointBackgroundColor: "green",
+        tension: 0.3,
+        fill: true,
+      },
+      {
+        label: "PM10 Predicted",
+        data: predictedData.map((row) => row.PM10),
+        borderColor: "orange",
+        backgroundColor: "rgba(255,165,0,0.1)",
+        pointBackgroundColor: "orange",
+        tension: 0.3,
+        fill: true,
+        borderDash: [6, 6],
+      },
+      {
+        label: "PM2.5 Actual",
+        data: actualData.map((row) => row["PM2.5"]),
+        borderColor: "blue",
+        backgroundColor: "rgba(0,0,255,0.1)",
+        pointBackgroundColor: "blue",
+        tension: 0.3,
+        fill: true,
+      },
+      {
+        label: "PM2.5 Predicted",
+        data: predictedData.map((row) => row["PM2.5"]),
+        borderColor: "purple",
+        backgroundColor: "rgba(128,0,128,0.1)",
+        pointBackgroundColor: "purple",
+        tension: 0.3,
+        fill: true,
+        borderDash: [6, 6],
+      },
+      {
+        label: "NO2 Actual",
+        data: actualData.map((row) => row.NO2),
+        borderColor: "red",
+        backgroundColor: "rgba(255,0,0,0.1)",
+        pointBackgroundColor: "red",
+        tension: 0.3,
+        fill: true,
+
+      },
+      {
+        label: "NO2 Predicted",
+        data: predictedData.map((row) => row.NO2),
+        borderColor: "brown",
+        backgroundColor: "rgba(165,42,42,0.1)",
+        pointBackgroundColor: "brown",
+        tension: 0.3,
+        fill: true,
+        borderDash: [6, 6],
+
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: "index", intersect: false },
+    animation: { duration: 800, easing: "easeOutQuart" },
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: { color: "#333", font: { size: 14 } },
+      },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: (context) => `Value: ${context.parsed.y}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          displayFormats: { hour: "h:mm a" },
+          tooltipFormat: "MMM d, h:mm a",
+        },
+        ticks: { color: "#444" },
+        grid: { color: "rgba(0,0,0,0.1)" },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: "#444" },
+        grid: { color: "rgba(0,0,0,0.05)" },
+      },
+    },
+  };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        fontFamily: "Arial, sans-serif",
-      }}
-    > 
-  
-      <h2 style={{textAlign:"centre",marginButtom:"20px"}}> AirQuality Monitoring DrashBoard</h2>
+    <div className="air-container">
+      <h2 className="air-title">🌫️ Air Quality Monitoring Dashboard</h2>
 
-      <div style={{
-        display:"flex",
-        justifyContent:"center",
-        marginBottom:"10px",
-        borderRadius:"10px",
-        overflow:"hidden",
-        boxShadow:"0 0 10px rgba(0,0,0,0.15)",
-      }}>
-        <button onClick={()=> setActiveTab("table")}
-          style={{
-            flex:1,
-            padding:"10px 20px",
-            border:"none",
-            backgroundColor: activeTab==="table" ? "#007bff" : "#ccc",
-            color:"white",
-            fontWeight:"bold",
-            transition:"background 0.3s",
-          }}
-          > AirQuality Table </button>
-          <button
-            onClick={() => setActiveTab("Graph")}
-            style={{
-              flex: 1,
-              padding: "10px 20px",
-              border: "none",
-              backgroundColor: activeTab === "Graph" ? "#007bff" : "#ccc",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer",
-              transition: "background 0.3s",
-            }}
-          >
-            Graph
-          </button>
+      <div className="tab-buttons">
+        <button
+          className={activeTab === "table" ? "active" : ""}
+          onClick={() => setActiveTab("table")}
+        >
+          Table
+        </button>
+
+        <button
+          className={activeTab === "graph" ? "active" : ""}
+          onClick={() => setActiveTab("graph")}
+        >
+          Graph
+        </button>
       </div>
-      <div
-        style={{
-          width: "90%",
-          maxWidth: "900px",
-          height: "60vh",
-          border: "1px solid #ccc",
-          borderRadius: "10px",
-          backgroundColor: "#ede4e4",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+
+      <div className="air-content">
         {activeTab === "table" ? (
           loading ? (
             <p>Loading data...</p>
-          ): data.length === 0?(
+          ) : filteredData.length === 0 ? (
             <p>No air quality data available.</p>
-          ):(
-            <div 
-            style={{
-              width:"100%",
-              height:"100%",
-              overflowY:"auto",
-            }} >
-              <table style={{width:"100%",borderCollapse:"collapse",textAlign:"left"}}>
-                <thead 
-                style={{
-                  backgroundColor:"#212529",
-                  color:"white",
-                  position:"sticky",
-                  top:0,
-                  zIndex:1,
-                }} >
+          ) : (
+            <div className="table-wrapper">
+              <table className="air-table">
+                <thead>
                   <tr>
-                    {displayedColumns.map((col)=>(
-                      <th
-                        key={col}
-                        style={{
-                          padding:"10px",
-                          border:"1px solid #ccc"
-                        }}
-                      >{col}</th>
+                    {displayedColumns.map((col) => (
+                      <th key={col}>{col}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((row,i)=>(
-                    <tr 
-                     key={i}
-                     style={{
-                      backgroundColor: i%2===0? "#2978c7" : "#b03232",
-                      transition:"background 0.2s",
-                      color:"white",     
-                     }} 
-                     onMouseEnter={(e)=>(e.currentTarget.style.background="#072646")}
-                     onMouseLeave={(e)=>(e.currentTarget.style.background=
-                      i%2===0 ? "#2978c7" : "#b03232")}
-                     >
-                      {displayedColumns.map((col)=>(
-                        <td 
-                          key={col}
-                          style={{padding:"8px",border:"1px solid #ccc"}}>
-                          {row[col] ?? "-"}
-                          </td>
+                  {filteredData.map((row, i) => (
+                    <tr key={i}>
+                      {displayedColumns.map((col) => (
+                        <td key={col}>{row[col] ?? "-"}</td>
                       ))}
-                      </tr>
+                    </tr>
                   ))}
                 </tbody>
-
-
-                </table>
-               </div>
+              </table>
+            </div>
           )
-        ):(
-          <p>Graph view coming soon...</p>
+        ) : (
+          <div className="chart-wrapper">
+            {loading ? (
+              <p>Loading chart...</p>
+            ) : filteredData.length === 0 ? (
+              <p>No data available for chart.</p>
+            ) : (
+              <Line data={chartData} options={chartOptions} />
+            )}
+          </div>
         )}
-
-
       </div>
-     
     </div>
   );
 }

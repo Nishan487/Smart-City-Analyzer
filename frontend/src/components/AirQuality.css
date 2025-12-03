@@ -1,0 +1,89 @@
+.air-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Poppins", sans-serif;
+  background-color: #f7f9fd;
+  min-height: 100vh;
+}
+
+.air-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1e3a8a;
+}
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #8c8989;
+  font-weight: 600;
+  color: #ffffff;
+  transition: 0.3s;
+}
+
+.tab-buttons button.active {
+  background-color: #007bff;
+}
+
+.air-content {
+  width: 90%;
+  max-width: 900px;
+  background: rgb(237, 245, 252);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.table-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.air-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.air-table th {
+  background-color: #1e293b;
+  color: rgb(249, 243, 243);
+  padding: 10px;
+  position: sticky;
+  top: 0;
+}
+
+.air-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+  border: 1px solid white;
+}
+
+.air-table tr:nth-child(even) {
+  background-color: #4c9be7;
+}
+
+.air-table tr:nth-child(odd) {
+  background-color: #4f45e1;
+}
+
+.air-table tr:hover {
+  background-color: #dbeafe;
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 400px;
+  min-height: 300px;
+}
